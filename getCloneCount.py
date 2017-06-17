@@ -8,7 +8,7 @@ import requests, json, os.path
 # BE CAREFUL; PLAINTEXT CREDENTIALS!
 username = "username"
 password = "password"
-repos = ['VASim', 'ANMLZoo', 'Automata-to-Routing']
+repos = ['VASim', 'ANMLZoo', 'Automata-to-Routing', 'GitHub-Clone-Scraper']
 
 # Class defining the clone information returned by GitHub about each repo
 class CloneRecord:
@@ -59,14 +59,15 @@ def writeCloneFile(fn, recordMap):
     countTotal = 0
     uniquesTotal = 0
     for timestamp, record in recordMap.items():
-        countTotal += record.count
-        uniquesTotal += record.uniques
+        countTotal += int(record.count)
+        uniquesTotal += int(record.uniques)
 
     # write totals
     writeTotalsLine(f, countTotal, uniquesTotal)
 
     # write entries
     for timestamp, record in recordMap.items():
+        printRecord(record)
         line = str(record.count) + " " + str(record.timestamp) + " " + str(record.uniques) + "\n"
         f.write(line)
 
@@ -103,6 +104,8 @@ def updateRepo(repo):
         printRecord(record)
         print "---------------------"
 
+    print "Records: " + str(len(recordMap))
+
     # Get data from Github
     print "Asking Github for data..."
     counts = getCloneCounts()
@@ -125,8 +128,12 @@ def updateRepo(repo):
 
     print "---------------------"
     print "DONE"
+    print ""
 
 #####################################################
 
 for repo in repos:
+    print "************************************************"
+    print "   Updating data for " + repo
+    print "************************************************"
     updateRepo(repo)
